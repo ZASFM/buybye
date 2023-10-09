@@ -1,9 +1,16 @@
-import Image from 'next/image'
+import { prisma } from "@/lib/db/prisma"
+import ProductCard from "@/components/productCard"
 
-export default function Home() {
+export default async function Home() {
+  const products = await prisma.product.findMany({
+    orderBy:{id:'desc'}
+  })
+  
   return (
     <div>
-      Hi
+      <ProductCard
+         product={products[0]}
+      />
     </div>
   )
 }
