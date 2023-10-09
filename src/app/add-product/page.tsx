@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db/prisma"
 import {redirect} from 'next/navigation';
+import { FromSubmitButton } from "@/components/formSubmitButton";
 
 export const metadata={
    title:'Add product'
@@ -65,12 +66,12 @@ export default function AddProductPage(){
                placeholder="Price"
                type="number"
             />
-            <button
+            <FromSubmitButton
                type="submit"
-               className="btn btn-primary btn-block"
+               className="btn-block"
             > 
                Add product
-            </button>
+            </FromSubmitButton>
          </form>
       </div>
    )
