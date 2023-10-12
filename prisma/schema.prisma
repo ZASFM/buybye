@@ -15,7 +15,31 @@ model Product {
   price       Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  CartItem    CartItem[]
 
   //connecting to collection called products in MDB
   @@map("products")
+}
+
+model Cart{
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  CartItem  CartItem[]
+
+  //connecting to collection called cart in MDB
+  @@map("cart")
+}
+
+model CartItem{
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  productId String  @db.ObjectId
+  product   Product @relation(fields: [productId], references:[id], onDelete: Cascade)
+  quantity  Int
+  cartId    String  @db.ObjectId
+  cart      Cart    @relation(fields: [cartId], references: [id])
+
+  //connecting to collection called cartitems in MDB
+  @@map("cartitems")
 }
