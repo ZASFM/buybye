@@ -14,7 +14,11 @@ export async function incrementProductQuantity(productId: string){
    if(articleInCart){
       await prisma.cartItem.update({
          where:{id:articleInCart.id},
-         data:{quantity:{increment:1}}
+         data:{
+            quantity:{
+               increment:1
+            }
+         }
       })
    //if article does not exists, add 1 to the quantity
    }else{
