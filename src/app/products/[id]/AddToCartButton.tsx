@@ -1,6 +1,6 @@
 "use client"
 
-import { startTransition, useState, useTransition } from "react"
+import { useState, useTransition } from "react"
 
 interface AddToCartButtonProps{
    productId: string,
@@ -29,7 +29,7 @@ export default function AddToCartButton({productId, incrementProductQuantity}:Ad
               className="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
-              stroke="currentColor"
+              stroke="currentColor" 
             >
               <path
                  strokeLinecap="round"
