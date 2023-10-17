@@ -11,6 +11,7 @@ export type ShoppingCart = CartWithProducts & {
    subTotal: number
 }
 
+//shopping cart has both size and subTotal alongside with all the other props cart items info
 export async function getCart():Promise<ShoppingCart | null>{
    const localCardId = cookies().get('localCartId')?.value;
    const cart= localCardId?
