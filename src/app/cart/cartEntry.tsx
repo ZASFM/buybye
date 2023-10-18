@@ -3,12 +3,22 @@ import Image from 'next/image';
 import {CartItemWithProduct} from '../../lib/db/carts';
 import Link from 'next/link';
 import { formatPrice } from '@/lib/format';
+import { useTransition } from 'react';
 
 interface CartEntryProps{
-   cartItem: CartItemWithProduct
+   cartItem: CartItemWithProduct,
+   setProductQuantity:(productId: string, quantity: number)=>Promise<void>
 }
 
-export default function CartEntry({cartItem:{product, quantity}}:CartEntryProps){
+export default function CartEntry(
+   {
+      cartItem:{
+         product, 
+         quantity
+      },
+      setProductQuantity
+   }:CartEntryProps
+){
 
    //adding options to the dropdown for quantity
    const options:JSX.Element[] =[];
@@ -19,6 +29,8 @@ export default function CartEntry({cartItem:{product, quantity}}:CartEntryProps)
          </option>
       )
    } 
+
+   const [isPending, startTransition]=useTransition()
 
    return (
       <div>
@@ -41,7 +53,10 @@ export default function CartEntry({cartItem:{product, quantity}}:CartEntryProps)
                   defaultValue={quantity}
                   className='select select-border w-full max-w-[80px]'
                   onChange={(e)=>{
-                     
+                     const newQuantity = parseInt(e.currentTarget.value);
+                     startTransition(async()=>{
+                        await setProductQuantity(product.id,newQuantity);
+                     })
                   }}
                >
                   {options}

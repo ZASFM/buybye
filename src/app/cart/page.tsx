@@ -1,6 +1,6 @@
 import { getCart } from "@/lib/db/carts"
 import CartEntry from "./cartEntry";
-
+import {setCartQuantity} from './actions';
 
 export const metadata={
    title:"Your cart - overview"
@@ -19,6 +19,7 @@ export default async function CartPage(){
                return (
                   <CartEntry
                      cartItem={item}
+                     setProductQuantity={setCartQuantity}
                      key={item.id}
                   />
                )
