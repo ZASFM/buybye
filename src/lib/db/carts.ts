@@ -6,6 +6,12 @@ export type CartWithProducts = Prisma.CartGetPayload<{
    include:{CartItem:{include:{product:true}}}
 }>
 
+//type for one cart with its products details, used for the cart page
+export type CartItemWithProduct=Prisma.CartItemGetPayload<{
+   include:{product:true}
+}>
+
+//type for the getCart function, includes the size, subtotal alongside with the items from Cart
 export type ShoppingCart = CartWithProducts & {
    size: number,
    subTotal: number
