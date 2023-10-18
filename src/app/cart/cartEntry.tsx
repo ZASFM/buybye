@@ -10,7 +10,8 @@ interface CartEntryProps{
    setProductQuantity:(productId: string, quantity: number)=>Promise<void>
 }
 
-export default function CartEntry(
+export default function CartEntry
+(
    {
       cartItem:{
          product, 
@@ -30,7 +31,7 @@ export default function CartEntry(
       )
    } 
 
-   const [isPending, startTransition]=useTransition()
+   const [isPending, startTransition]=useTransition();
 
    return (
       <div>

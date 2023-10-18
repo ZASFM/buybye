@@ -13,6 +13,7 @@ export async function setCartQuantity(productId: string, quantity: number){
    //articleInCart.id is the id of the cartItem inside the Cart,  
    const articleInCart = cart.CartItem.find(item=>item.productId===productId);
    
+   //if user sets quantity to zero then delete cartItem from cart:
    if(quantity === 0){
 
       if(articleInCart){
