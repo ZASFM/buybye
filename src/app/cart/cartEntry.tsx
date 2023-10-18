@@ -37,8 +37,14 @@ export default function CartEntry({cartItem:{product, quantity}}:CartEntryProps)
             </div>
             <div>Price: {formatPrice(product.price)}</div>
             <div className='my-1 flex items-center gap-2'>
-               <select>
-
+               <select
+                  defaultValue={quantity}
+                  className='select select-border w-full max-w-[80px]'
+                  onChange={(e)=>{
+                     
+                  }}
+               >
+                  {options}
                </select>
             </div>
             <div>
