@@ -60,11 +60,15 @@ export default function CartEntry
                      })
                   }}
                >
+                  <option value={0}>0 (Remove)</option>
                   {options}
                </select>
             </div>
             <div>
                Total: {formatPrice(product.price*quantity)}
+               {isPending && (
+                  <span className='loading loading-spinner loading-sm'></span>
+               )}
             </div>
          </div>
          <div className='divider'></div>
