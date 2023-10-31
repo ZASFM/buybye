@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/db/prisma"
 import {redirect} from 'next/navigation';
 import { FromSubmitButton } from "@/components/formSubmitButton";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]/route";
 
 export const metadata={
    title:'Add product'
@@ -34,7 +36,10 @@ async function addProduct(formData:FormData){
    redirect('/');
 }
 
-export default function AddProductPage(){
+export default async function AddProductPage(){
+   const session = await getServerSession(authOptions);
+   if(!session) redirect("/api/auth/signin?callBackUrl=/add-product");
+
    return (
       <div>
          <h1 className="font-bold mb-3 text-lg">Add product</h1>
