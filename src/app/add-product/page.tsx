@@ -11,6 +11,10 @@ export const metadata={
 async function addProduct(formData:FormData){
    "use server"
 
+   //action protection
+   const session = await getServerSession(authOptions);
+   if(!session) redirect("/api/auth/signin?callBackUrl=/add-product");
+
    //getting data from server action
    const name=formData.get('name')?.toString();
    const description=formData.get('description')?.toString();
