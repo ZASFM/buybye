@@ -13,7 +13,15 @@ export const authOptions:NextAuthOptions = {
          clientId: env.GOOGLE_CLIENT_ID,
          clientSecret: env.GOOGLE_CLIENT_SECRET
       })
-   ]
+   ],
+   callbacks:{
+      //session is the returning session when signing, and user contains the user data
+      session({session,user}){
+         //when creating a cart with a defined session, we need to ad a user.id to session.
+         session.user.id = user.id;
+         return session;
+      }
+   }
 } 
 
 const handler = NextAuth(authOptions);

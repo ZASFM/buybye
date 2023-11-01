@@ -24,6 +24,7 @@ model Product {
 model Cart{
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   userId    String?  @db.ObjectId
+  //userId may be undefined if a non registerd user add items to the cart, otherwise it will be populated with the id of the user
   user      User?    @relation(fields: [userId],references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
