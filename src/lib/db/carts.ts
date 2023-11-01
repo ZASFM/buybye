@@ -1,6 +1,6 @@
 import { cookies } from "next/dist/client/components/headers";
 import { prisma } from "./prisma";
-import {Cart, Prisma} from '@prisma/client';
+import {Cart, CartItem, Prisma} from '@prisma/client';
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
@@ -87,4 +87,69 @@ export async function createCart():Promise<ShoppingCart>{
       size:0,
       subTotal:0
    }
+}
+
+async function mergeAnonymousCartWithUserCart(userId: string){
+   const localCartId = cookies().get("localCartId")?.value;
+   const localCart = localCartId?
+   await prisma.cart.findUnique({
+      where:{id:localCartId},
+      include:{CartItem:true}
+   }):
+   null;
+
+   if(!localCart) return;
+
+   const userCart = await prisma.cart.findFirst({
+      where:{userId},
+      include:{CartItem:true}
+   });
+
+   await prisma.$transaction(async tx=>{
+      if(userCart){
+         const mergedCartItems = mergeCartItems(userCart.CartItem,localCart.CartItem);
+
+         await tx.cartItem.deleteMany({
+            where:{cartId:userCart.id}
+         });
+
+         await tx.cartItem.createMany({
+            data:mergedCartItems.map(item=>({
+               cartId:userCart.id,
+               productId:item.productId,
+               quantity:item.quantity
+            }))
+         })
+      }else{
+         await tx.cart.create({
+            data:{
+               userId,
+               items:{
+                  createMany:{
+                     data: localCart.CartItem.map(item=>({
+                        productId: item.productId,
+                        quantity: item.quantity
+                     }))
+                  }
+               }
+            }
+         })
+      }
+   })   
+
+}
+
+//this function merges the cart of the logged in use with the cart of the not logged in user
+function mergeCartItems(...cartItems:CartItem[][]){
+   return cartItems.reduce((acc,items)=>{
+      items.forEach(item=>{
+         const existingItem = acc.find(i=>i.productId===item.productId);
+         if(existingItem){
+            existingItem.quantity+=item.quantity
+         }else{
+            acc.push(item)
+         }
+      })
+      return acc;
+   },[] as CartItem[])
 }
