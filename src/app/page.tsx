@@ -2,15 +2,34 @@ import { prisma } from "@/lib/db/prisma"
 import ProductCard from "@/components/productCard"
 import Image from 'next/image';
 import Link from 'next/link';
+import PaginationBar from "@/components/PaginationBar";
 
-export default async function Home() {
+interface HomeProps{
+   searchParams:{page:string}
+}
+
+export default async function Home({searchParams:{page='1'}}:HomeProps) {
+
+  const pageSize = 6;
+  //currentPage to show
+  const currentPage = parseInt(page);
+  //big photo to show at the begining
+  const heroItemCount = 1;
+  //total amount of elements
+  const totalItemCount = await prisma.product.count();
+
+  const totalPages = Math.ceil((totalItemCount-heroItemCount)/pageSize);
+
+  //getting the newest products
   const products = await prisma.product.findMany({
-    orderBy:{id:'desc'}
+    orderBy:{id:'desc'},
+    //how  may items to skip, for pagination porpouses
+    skip:(currentPage-1)*pageSize+(currentPage===1?0:heroItemCount),
+    take:pageSize+(currentPage===1?heroItemCount:0)
   })
   
   return (
-    <div>
-
+    <div className="flex flex-col items*center">
       <div className="hero rounded-xl bg-base-200">
         <div className="hero-content flex-col lg:flex-row">
           <Image
@@ -45,7 +64,7 @@ export default async function Home() {
           })
         }
       </div>
-
+    {totalPages>1 && <PaginationBar currentPage={currentPage} totalPages={totalPages}/>}
     </div>
 
   )
