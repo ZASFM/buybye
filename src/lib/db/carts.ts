@@ -89,7 +89,7 @@ export async function createCart():Promise<ShoppingCart>{
    }
 }
 
-async function mergeAnonymousCartWithUserCart(userId: string){
+export async function mergeAnonymousCartWithUserCart(userId: string){
    const localCartId = cookies().get("localCartId")?.value;
    const localCart = localCartId?
    await prisma.cart.findUnique({
@@ -107,12 +107,15 @@ async function mergeAnonymousCartWithUserCart(userId: string){
 
    await prisma.$transaction(async tx=>{
       if(userCart){
+         //merging local and anonymous carts
          const mergedCartItems = mergeCartItems(userCart.CartItem,localCart.CartItem);
 
+         //after merging deleting the user cart in db
          await tx.cartItem.deleteMany({
             where:{cartId:userCart.id}
          });
 
+         //after deleting the userCart, making a new one that has all the items
          await tx.cartItem.createMany({
             data:mergedCartItems.map(item=>({
                cartId:userCart.id,
@@ -121,6 +124,7 @@ async function mergeAnonymousCartWithUserCart(userId: string){
             }))
          })
       }else{
+         //creating an anonymous cart, which does not needs an cartId
          await tx.cart.create({
             data:{
                userId,
@@ -135,6 +139,14 @@ async function mergeAnonymousCartWithUserCart(userId: string){
             }
          })
       }
+
+      //once both carts are combined and saved in the db, then delete the anonymous cart
+      await tx.cart.delete({
+         where:{id: localCart.id}
+      });
+
+      //and delete the cookie refercing the anonymous cart
+      cookies().set('localCartId','');
    })   
 
 }
