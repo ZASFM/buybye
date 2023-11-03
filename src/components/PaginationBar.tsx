@@ -15,7 +15,7 @@ export default function PaginationBar({currentPage, totalPages}:PaginationBarPro
    for(let page = minPage;page<+maxPage;page++){
       numberPageElement.push(
          <Link
-            href={`?page${page}`}
+            href={`?page=${page}`}
             className={`join-item btn ${currentPage===page?"btn-active pointers-events-none":""}`}
          >
             {page}
@@ -24,8 +24,30 @@ export default function PaginationBar({currentPage, totalPages}:PaginationBarPro
    }
 
    return (
-      <div className="join">
-         {numberPageElement}
-      </div>
+      <>
+         <div className="join hidden sm:block">
+            {numberPageElement}
+         </div>
+         
+         <div className="join block sm:hidden">
+            <Link
+               href={`?page=${currentPage-1}`}
+               className="join-item btn"
+            >
+               {'<<'}
+            </Link>
+
+            <button className="join-item btn pointer-events-none">
+               Page {currentPage}
+            </button>
+ 
+            <Link
+               href={`?page=${currentPage+1}`}
+               className="join-item btn"
+            >
+               {'>>'}
+            </Link>
+         </div>
+      </>
    )
 }
