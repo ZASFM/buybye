@@ -128,7 +128,7 @@ export async function mergeAnonymousCartWithUserCart(userId: string){
          await tx.cart.create({
             data:{
                userId,
-               items:{
+               CartItem:{
                   createMany:{
                      data: localCart.CartItem.map(item=>({
                         productId: item.productId,
